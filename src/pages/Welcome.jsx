@@ -5,11 +5,11 @@ import { LogIn, UserPlus, Briefcase } from 'lucide-react';
 
 const Welcome = () => {
   return (
-    <div className="min-h-screen flex flex-col md:flex-row items-center justify-between bg-gradient-to-br from-blue-700 via-blue-900 to-black text-white p-10 font-sans">
+    <div className="min-h-screen flex flex-col md:flex-row items-center justify-between bg-gradient-to-br from-black via-blue-900 to-black text-white p-10 font-sans">
       
       <div className="max-w-xl text-center md:text-left">
         <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight drop-shadow-lg font-sans">
-          Welcome to <span className="text-yellow-300">KaamKaro</span>
+          Welcome to <span className="text-orange-400">KaamKaro</span>
         </h1>
         <p className="text-lg md:text-xl mb-8 font-medium text-gray-200 drop-shadow-sm">
           Discover your career move or hire the perfect candidate – all in one place.
