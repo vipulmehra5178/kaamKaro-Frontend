@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { User, Mail, Lock, Briefcase } from "lucide-react";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -29,79 +30,96 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row bg-gradient-to-br from-gray-900 to-blue-900 text-white relative overflow-hidden">
-      <div className="absolute inset-0 bg-[url('/images/job-bg.jpg')] bg-cover bg-center opacity-10 z-0" />
+    <div className="min-h-screen flex flex-col lg:flex-row bg-gradient-to-br from-black via-blue-900 to-gray-900 text-white relative overflow-hidden">
+      <div className="absolute inset-0 z-0 opacity-20">
+        <img
+          src="/images/luxury-pattern.png"
+          alt="Luxury Background Pattern"
+          className="w-full h-full object-cover"
+        />
+      </div>
 
       <div className="hidden lg:flex items-center justify-center w-1/2 z-10 p-10">
         <img
           src="/Sign.svg"
           alt="Register career"
-          className="max-w-full max-h-[500px] object-contain"
+          className="max-w-full max-h-[500px] object-contain drop-shadow-xl"
         />
       </div>
 
       <div className="flex items-center justify-center w-full lg:w-1/2 z-10 p-6 sm:p-10">
-        <div className="bg-white/10 backdrop-blur-md p-10 rounded-2xl shadow-2xl w-full max-w-md">
-          <h2 className="text-4xl font-bold text-center mb-6 text-white">
+        <div className="bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-md p-10 rounded-3xl shadow-2xl w-full max-w-md border border-blue-500/30">
+          <h2 className="text-5xl font-extrabold text-center mb-8 tracking-tight bg-gradient-to-r from-white via-blue-200 to-blue-400 bg-clip-text text-transparent drop-shadow-xl">
             Create Your Account
           </h2>
 
           {error && (
-            <p className="text-red-400 text-center mb-4 text-lg">{error}</p>
+            <p className="text-red-400 text-center mb-6 text-lg font-light">{error}</p>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <input
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              placeholder="Name"
-              required
-              className="w-full px-5 py-4 rounded-xl bg-white/20 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <input
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              placeholder="Email"
-              required
-              className="w-full px-5 py-4 rounded-xl bg-white/20 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <input
-              name="password"
-              type="password"
-              value={form.password}
-              onChange={handleChange}
-              placeholder="Password"
-              required
-              className="w-full px-5 py-4 rounded-xl bg-white/20 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <select
-              name="role"
-              value={form.role}
-              onChange={handleChange}
-              className="w-full px-5 py-4 rounded-xl bg-white/20 text-white placeholder-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-400"
-            >
-              <option className="bg-gray-800 text-white" value="candidate">
-                Candidate
-              </option>
-              <option className="bg-gray-800 text-white" value="employer">
-                Employer
-              </option>
-            </select>
-
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="relative">
+              <input
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                placeholder="Name"
+                required
+                className="w-full px-10 py-3 bg-gray-800/80 text-white placeholder-gray-400 rounded-xl border border-blue-500/30 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300"
+              />
+              <User size={18} className="absolute top-3 left-3 text-blue-400" />
+            </div>
+            <div className="relative">
+              <input
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                placeholder="Email"
+                required
+                className="w-full px-10 py-3 bg-gray-800/80 text-white placeholder-gray-400 rounded-xl border border-blue-500/30 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300"
+              />
+              <Mail size={18} className="absolute top-3 left-3 text-blue-400" />
+            </div>
+            <div className="relative">
+              <input
+                name="password"
+                type="password"
+                value={form.password}
+                onChange={handleChange}
+                placeholder="Password"
+                required
+                className="w-full px-10 py-3 bg-gray-800/80 text-white placeholder-gray-400 rounded-xl border border-blue-500/30 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300"
+              />
+              <Lock size={18} className="absolute top-3 left-3 text-blue-400" />
+            </div>
+            <div className="relative">
+              <select
+                name="role"
+                value={form.role}
+                onChange={handleChange}
+                className="w-full px-10 py-3 bg-gray-800/80 text-white rounded-xl border border-blue-500/30 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 appearance-none"
+              >
+                <option className="bg-gray-800 text-white" value="candidate">
+                  Candidate
+                </option>
+                <option className="bg-gray-800 text-white" value="employer">
+                  Employer
+                </option>
+              </select>
+              <Briefcase size={18} className="absolute top-3 left-3 text-blue-400" />
+            </div>
             <button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 transition-colors py-4 text-xl rounded-xl font-semibold shadow-md"
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white py-3 rounded-xl font-semibold tracking-wide shadow-lg transition-all duration-300 transform hover:scale-105"
             >
               Register
             </button>
           </form>
 
-          <p className="text-center text-white/70 mt-6 text-sm">
+          <p className="text-center text-gray-200 mt-6 text-sm font-light">
             Already have an account?{" "}
             <span
-              className="underline cursor-pointer hover:text-blue-300"
+              className="underline cursor-pointer text-blue-400 hover:text-blue-300 transition"
               onClick={() => navigate("/login")}
             >
               Login

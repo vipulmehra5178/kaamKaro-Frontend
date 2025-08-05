@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import useAuth from '../context/useAuth';
+import { Mail, Lock } from 'lucide-react';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ const Login = () => {
       login(res.data.user, res.data.token);
 
       if (res.data.user.role === 'employer') {
-        navigate('/post-job');
+        navigate('/my-posted-jobs');
       } else {
         navigate('/jobs');
       }
@@ -28,53 +29,69 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row bg-gradient-to-br from-black via-gray-900 to-blue-900 font-sans text-white relative overflow-hidden">
-      
-      <div className="absolute inset-0 bg-[url('/images/job-bg.jpg')] bg-cover bg-center opacity-10 z-0" />
+    <div className="min-h-screen flex flex-col lg:flex-row bg-gradient-to-br from-black via-blue-900 to-gray-900 font-sans text-white relative overflow-hidden">
+      <div className="absolute inset-0 z-0 opacity-20">
+        <img
+          src="/images/luxury-pattern.png"
+          alt="Luxury Background Pattern"
+          className="w-full h-full object-cover"
+        />
+      </div>
 
       <div className="hidden lg:flex items-center justify-center w-1/2 z-10 p-10">
         <img
           src="/login.svg"
           alt="Career illustration"
-          className="max-w-full max-h-[500px] object-contain"
+          className="max-w-full max-h-[500px] object-contain drop-shadow-xl"
         />
       </div>
 
       <div className="flex flex-col items-center justify-center w-full lg:w-1/2 z-10 p-6 sm:p-10">
-        <div className="bg-white/10 backdrop-blur-md p-10 rounded-2xl shadow-2xl w-full max-w-md">
-          <h2 className="text-4xl font-bold text-center mb-6 tracking-wide text-white">Login to View or Post Job</h2>
-          
-          {error && <p className="text-red-400 text-center mb-4 text-lg">{error}</p>}
-          
+        <div className="bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-md p-10 rounded-3xl shadow-2xl w-full max-w-md border border-blue-500/30">
+          <h2 className="text-5xl font-extrabold text-center mb-8 tracking-tight bg-gradient-to-r from-white via-blue-200 to-blue-400 bg-clip-text text-transparent drop-shadow-xl">
+            Login to KaamKaro
+          </h2>
+
+          {error && <p className="text-red-400 text-center mb-6 text-lg font-light">{error}</p>}
+
           <form onSubmit={handleSubmit} className="space-y-6">
-            <input
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              placeholder="Email"
-              className="w-full px-5 py-4 rounded-xl bg-white/20 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-              required
-            />
-            <input
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              placeholder="Password"
-              type="password"
-              className="w-full px-5 py-4 rounded-xl bg-white/20 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-              required
-            />
+            <div className="relative">
+              <input
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                placeholder="Email"
+                className="w-full px-10 py-3 bg-gray-800/80 text-white placeholder-gray-400 rounded-xl border border-blue-500/30 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300"
+                required
+              />
+              <Mail size={18} className="absolute top-3 left-3 text-blue-400" />
+            </div>
+            <div className="relative">
+              <input
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                placeholder="Password"
+                type="password"
+                className="w-full px-10 py-3 bg-gray-800/80 text-white placeholder-gray-400 rounded-xl border border-blue-500/30 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300"
+                required
+              />
+              <Lock size={18} className="absolute top-3 left-3 text-blue-400" />
+            </div>
             <button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 transition-colors py-4 text-xl rounded-xl font-semibold shadow-md"
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white py-3 rounded-xl font-semibold tracking-wide shadow-lg transition-all duration-300 transform hover:scale-105"
             >
               Login
             </button>
           </form>
 
-          <p className="text-center text-white/70 mt-6 text-sm">
+          <p className="text-center text-gray-200 mt-6 text-sm font-light">
             Don’t have an account?{' '}
-            <span className="underline cursor-pointer hover:text-blue-300" onClick={() => navigate('/register')}>
+            <span
+              className="underline cursor-pointer text-blue-400 hover:text-blue-300 transition"
+              onClick={() => navigate('/register')}
+            >
               Sign up
             </span>
           </p>
