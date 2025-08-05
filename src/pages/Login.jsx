@@ -18,7 +18,7 @@ const Login = () => {
       login(res.data.user, res.data.token);
 
       if (res.data.user.role === 'employer') {
-        navigate('/my-posted-jobs');
+        navigate('/post-job');
       } else {
         navigate('/jobs');
       }
