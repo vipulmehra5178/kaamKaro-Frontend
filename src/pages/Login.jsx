@@ -30,13 +30,7 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row bg-gradient-to-br from-black via-blue-900 to-gray-900 font-sans text-white relative overflow-hidden">
-      <div className="absolute inset-0 z-0 opacity-20">
-        <img
-          src="/images/luxury-pattern.png"
-          alt="Luxury Background Pattern"
-          className="w-full h-full object-cover"
-        />
-      </div>
+      
 
       <div className="hidden lg:flex items-center justify-center w-1/2 z-10 p-10">
         <img

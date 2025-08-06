@@ -1,211 +1,247 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Briefcase, Mail, Calendar, BookOpen, Code, Link as LinkIcon } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 
 const JobApplications = () => {
   const { jobId } = useParams();
   const [applications, setApplications] = useState([]);
-  const [visibleResumes, setVisibleResumes] = useState({});
-  const [searchSkill, setSearchSkill] = useState("");
   const [filteredApps, setFilteredApps] = useState([]);
+  const [searchSkill, setSearchSkill] = useState("");
+  const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const [visibleResumes, setVisibleResumes] = useState({});
+
+  const API_BASE = import.meta.env.VITE_API_BASE_URL;
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    const fetchApplications = async () => {
+    const fetchApplicationsAndJob = async () => {
       try {
-        const res = await fetch(
-          `${import.meta.env.VITE_API_BASE_URL}/api/applications/job/${jobId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        const [appsRes, jobRes] = await Promise.all([
+          fetch(`${API_BASE}/api/applications/job/${jobId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`${API_BASE}/api/jobs/${jobId}`),
+        ]);
 
-        if (!res.ok) {
-          throw new Error("Failed to fetch job applications.");
-        }
+        const appsData = await appsRes.json();
+        const jobData = await jobRes.json();
 
-        const data = await res.json();
-        setApplications(data);
-        setFilteredApps(data);
-        setLoading(false);
+        setApplications(appsData);
+        setFilteredApps(appsData);
+        setJob(jobData);
       } catch (err) {
-        console.error("Error fetching job applications:", err);
-        setError(err.message);
+        console.error(err);
+        setError("Failed to fetch job or applications");
+      } finally {
         setLoading(false);
       }
     };
 
-    fetchApplications();
+    fetchApplicationsAndJob();
   }, [jobId]);
 
   useEffect(() => {
-    if (!searchSkill) {
+    if (!searchSkill.trim()) {
       setFilteredApps(applications);
-    } else {
-      const filtered = applications.filter((app) =>
-        app.skills?.some((skill) =>
-          skill.toLowerCase().includes(searchSkill.toLowerCase())
-        )
-      );
-      setFilteredApps(filtered);
-      setCurrentPage(1);
+      return;
     }
+
+    const term = searchSkill.toLowerCase();
+
+    const filtered = applications.filter((app) => {
+      const candidate = app.candidate || {};
+      const education = app.education || {};
+
+      return (
+        candidate.name?.toLowerCase().includes(term) ||
+        candidate.email?.toLowerCase().includes(term) ||
+        candidate.phone?.toLowerCase().includes(term) ||
+        app.experience?.toString().toLowerCase().includes(term) ||
+        app.skills?.some((skill) => skill.toLowerCase().includes(term)) ||
+        education.degree?.toLowerCase().includes(term) ||
+        education.institution?.toLowerCase().includes(term) ||
+        education.yearOfCompletion?.toString().includes(term)
+      );
+    });
+
+    setFilteredApps(filtered);
   }, [searchSkill, applications]);
 
   const toggleResume = (id) => {
     setVisibleResumes((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const paginatedApps = filteredApps.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const downloadCSV = () => {
+    const headers = [
+      "S.No",
+      "Name",
+      "Email",
+      "Phone",
+      "Experience",
+      "Skills",
+      "Degree",
+      "Institution",
+      "Year of Completion",
+      "Resume URL"
+    ];
 
-  const totalPages = Math.ceil(filteredApps.length / itemsPerPage);
+    const rows = filteredApps.map((app, index) => [
+      index + 1,
+      app.candidate?.name || "",
+      app.candidate?.email || "",
+      app.candidate?.phone || "",
+      app.experience || "",
+      app.skills?.join(", ") || "",
+      app.education?.degree || "",
+      app.education?.institution || "",
+      app.education?.yearOfCompletion || "",
+      app.resumeUrl || ""
+    ]);
 
-  if (loading) return <p className="text-center text-gray-200 text-xl font-light">Loading...</p>;
-  if (error) return <p className="text-center text-red-400 text-xl font-light">{error}</p>;
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      [headers, ...rows].map((e) => e.map((x) => `"${x}"`).join(",")).join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `job_applications_${jobId}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  if (loading)
+    return <p className="text-center text-gray-400 text-lg">Loading...</p>;
+  if (error)
+    return <p className="text-center text-red-400 text-lg">{error}</p>;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-blue-900 to-gray-900 py-16 px-6 sm:px-12 lg:px-24 relative overflow-hidden">
-      
-
-      <div className="relative z-10 max-w-6xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tight bg-gradient-to-r from-white via-blue-400 to-blue-200 bg-clip-text text-transparent drop-shadow-xl">
+    <div className="min-h-screen px-6 py-10 md:px-20 bg-gradient-to-b from-black via-gray-900 to-blue-950 text-white">
+      <div className="max-w-6xl mx-auto space-y-10">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold tracking-tight text-white">
             Job Applications
-          </h2>
-          <p className="mt-5 text-xl text-gray-200 max-w-2xl mx-auto font-light leading-relaxed">
-            Review top-tier candidates for your opportunity with KaamKaro's curated application portal.
+          </h1>
+          <p className="text-gray-300 mt-2">
+            Review and analyze candidates applying for your openings.
           </p>
         </div>
 
-        <div className="mb-10 flex justify-center">
-          <input
-            type="text"
-            placeholder="Search by skill..."
-            value={searchSkill}
-            onChange={(e) => setSearchSkill(e.target.value)}
-            className="w-full md:w-2/3 lg:w-1/2 p-4 bg-gray-800/80 text-white placeholder-gray-400 rounded-xl border border-blue-500/30 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 shadow-md"
-          />
-        </div>
-
-        {filteredApps.length === 0 ? (
-          <p className="text-center text-gray-300 text-xl font-light">No applications found.</p>
-        ) : (
-          <div className="grid gap-10">
-            {paginatedApps.map((app) => (
-              <div
-                key={app._id}
-                className="bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-md border border-blue-500/30 rounded-3xl p-8 shadow-2xl hover:shadow-blue-600/50 hover:border-blue-600 transition-all duration-500 transform hover:-translate-y-2"
-              >
-                <h3 className="text-2xl font-bold text-white mb-4 tracking-tight">
-                  {app.candidate?.name}
-                </h3>
-
-                <div className="text-sm text-gray-300 space-y-4 mb-6">
-                  <p className="flex items-center gap-3">
-                    <Mail size={18} className="text-blue-400" />
-                    <span className="text-white font-semibold">Email:</span> {app.candidate?.email}
-                  </p>
-                  <p className="flex items-center gap-3">
-                    <Calendar size={18} className="text-blue-400" />
-                    <span className="text-white font-semibold">Applied on:</span>{" "}
-                    {new Date(app.createdAt).toLocaleDateString()}
-                  </p>
-                  <p className="flex items-center gap-3">
-                    <Briefcase size={18} className="text-blue-400" />
-                    <span className="text-white font-semibold">Experience:</span> {app.experience}
-                  </p>
-                  <p className="flex items-center gap-3">
-                    <Code size={18} className="text-blue-400" />
-                    <span className="text-white font-semibold">Skills:</span> {app.skills?.join(", ")}
-                  </p>
-                  <p className="flex items-center gap-3">
-                    <BookOpen size={18} className="text-blue-400" />
-                    <span className="text-white font-semibold">Education:</span>{" "}
-                    {app.education?.degree}, {app.education?.institution} ({app.education?.yearOfCompletion})
-                  </p>
-                  <p className="flex items-center gap-3">
-                    <LinkIcon size={18} className="text-blue-400" />
-                    <span className="text-white font-semibold">Portfolio:</span>{" "}
-                    {app.portfolioLinks?.map((link, idx) => (
-                      <a
-                        key={idx}
-                        href={link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-400 underline mr-2 hover:text-blue-300 transition"
-                      >
-                        {link}
-                      </a>
-                    ))}
-                  </p>
-                  <p className="text-gray-200">
-                    <span className="text-white font-semibold">Cover Letter:</span> {app.coverLetter}
-                  </p>
-                </div>
-
-                <button
-                  onClick={() => toggleResume(app._id)}
-                  className="mt-4 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-xl font-semibold tracking-wide hover:from-blue-700 hover:to-blue-900 transition-all duration-300 shadow-md hover:shadow-blue-500/50"
-                >
-                  {visibleResumes[app._id] ? "Hide Resume" : "View Resume"}
-                </button>
-
-                {visibleResumes[app._id] && (
-                  <div className="mt-6">
-                    <iframe
-                      src={app.resumeUrl}
-                      title={`Resume of ${app.candidate?.name}`}
-                      className="w-full h-96 border border-blue-500/30 rounded-xl shadow-inner"
-                      onError={(e) => {
-                        e.target.style.display = "none";
-                        const fallback = document.getElementById(`fallback-${app._id}`);
-                        if (fallback) fallback.style.display = "block";
-                      }}
-                    />
-                    <a
-                      href={app.resumeUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-400 underline block mt-3 text-sm hover:text-blue-300 transition"
-                      id={`fallback-${app._id}`}
-                      style={{ display: "none" }}
-                    >
-                      Download Resume (Fallback)
-                    </a>
-                  </div>
-                )}
-              </div>
-            ))}
+        {job && (
+          <div className="bg-black/40 border border-blue-900 rounded-lg p-6 space-y-3">
+            <h2 className="text-2xl font-semibold text-white">{job.title}</h2>
+            <p className="text-gray-300">
+              <span className="font-semibold text-white">Company:</span>{" "}
+              {job.company}
+            </p>
+            <p className="text-gray-300">
+              <span className="font-semibold text-white">Location:</span>{" "}
+              {job.location?.city}, {job.location?.state}
+            </p>
+            <p className="text-gray-300">
+              <span className="font-semibold text-white">Salary:</span> ₹
+              {job.salary.min} – ₹{job.salary.max}
+            </p>
+            <p className="text-gray-300">
+              <span className="font-semibold text-white">Experience:</span>{" "}
+              {job.experience}
+            </p>
+            <p className="text-gray-300">
+              <span className="font-semibold text-white">
+                Total Applications:
+              </span>{" "}
+              {applications.length}
+            </p>
           </div>
         )}
 
-        {totalPages > 1 && (
-          <div className="mt-12 flex justify-center items-center gap-6">
-            <button
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-xl font-semibold tracking-wide disabled:opacity-50 hover:from-blue-700 hover:to-blue-900 transition-all duration-300 shadow-md hover:shadow-blue-500/50"
-            >
-              Previous
-            </button>
-            <span className="text-lg font-semibold text-white">
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
-              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-xl font-semibold tracking-wide disabled:opacity-50 hover:from-blue-700 hover:to-blue-900 transition-all duration-300 shadow-md hover:shadow-blue-500/50"
-            >
-              Next
-            </button>
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 mt-6">
+          <Input
+            type="text"
+            placeholder="Search by name, email, skill, education..."
+            value={searchSkill}
+            onChange={(e) => setSearchSkill(e.target.value)}
+            className="w-full md:max-w-xl bg-black border-gray-700 placeholder-gray-400 text-white"
+          />
+          <Button
+            variant="outline"
+            className="bg-blue-950 border border-blue-800 hover:bg-green-500 text-white"
+            onClick={downloadCSV}
+          >
+            Download CSV
+          </Button>
+        </div>
+
+        <Separator className="my-6 bg-black" />
+
+        {filteredApps.length === 0 ? (
+          <p className="text-center text-gray-400 text-lg">
+            No applications found.
+          </p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full table-auto border-collapse text-sm">
+              <thead>
+                <tr className="bg-black text-left text-gray-400">
+                  <th className="p-3">S.No.</th>
+                  <th className="p-3">Name</th>
+                  <th className="p-3">Email & Phone</th>
+                  <th className="p-3">Experience</th>
+                  <th className="p-3">Skills</th>
+                  <th className="p-3">Education</th>
+                  <th className="p-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredApps.map((app, index) => (
+                  <tr
+                    key={app._id}
+                    className="border-b border-gray-700 hover:bg-gray-800/50"
+                  >
+                    <td className="p-3 text-gray-300">{index + 1}</td>
+                    <td className="p-3 font-medium text-white">
+                      {app.candidate?.name}
+                    </td>
+                    <td className="p-3 text-gray-300">
+                      <p>{app.candidate?.email}</p>
+                      <p>{app.phone}</p>
+                    </td>
+                    <td className="p-3 text-gray-300">{app.experience}</td>
+                    <td className="p-3 text-gray-300">
+                      {app.skills?.join(", ")}
+                    </td>
+                    <td className="p-3 text-gray-300">
+                      {app.education?.degree}, {app.education?.institution} (
+                      {app.education?.yearOfCompletion})
+                    </td>
+                    <td className="p-3">
+                      <button
+                        onClick={() => toggleResume(app._id)}
+                        className="text-sm text-blue-400 hover:underline"
+                      >
+                        {visibleResumes[app._id]
+                          ? "Hide Resume"
+                          : "View Resume"}
+                      </button>
+                      {visibleResumes[app._id] && (
+                        <div className="mt-2">
+                          <iframe
+                            src={app.resumeUrl}
+                            title={`Resume of ${app.candidate?.name}`}
+                            className="w-full h-96 border border-gray-600 rounded-md"
+                          />
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </div>

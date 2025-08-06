@@ -56,17 +56,29 @@ const MyApplications = () => {
         />
       </div>
 
-      <div className="relative z-10 max-w-5xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-5xl font-extrabold tracking-tight bg-gradient-to-r from-white via-blue-200 to-blue-400 bg-clip-text text-transparent drop-shadow-xl">
-            My Applications
-          </h2>
-          <p className="mt-5 text-xl text-gray-200 max-w-2xl mx-auto font-light leading-relaxed">
-            Track your journey to elite opportunities with KaamKaro's application dashboard.
-          </p>
+      <div className="relative z-10 max-w-6xl mx-auto">
+       <div className="mb-12 flex flex-col md:flex-row items-center justify-between gap-8">
+  <div className="text-center md:text-left flex-1">
+    <h2 className="text-5xl font-extrabold tracking-tight bg-gradient-to-r from-white via-blue-200 to-blue-400 bg-clip-text text-transparent drop-shadow-xl flex items-center justify-center md:justify-start gap-3">
+      My Applications
+      <span className="text-sm font-semibold bg-blue-600 text-white px-3 py-1 rounded-full shadow-sm">
+        {applications.length}
+      </span>
+    </h2>
+    <p className="mt-4 text-xl text-gray-200 font-light leading-relaxed max-w-xl">
+      Track your journey to elite opportunities with KaamKaro's application dashboard.
+    </p>
+  </div>
+
+          <div className="hidden md:block w-64 lg:w-80 flex-shrink-0">
+            <img
+              src="/mine.svg"
+              alt="Applications Illustration"
+              className="w-full h-auto"
+            />
+          </div>
         </div>
 
-        {/* Search Input */}
         <div className="mb-10 flex justify-center">
           <input
             type="text"

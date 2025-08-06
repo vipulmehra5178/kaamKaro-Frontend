@@ -1,123 +1,191 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Briefcase, MapPin, Calendar, Users } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
 
 const MyPostedJobs = () => {
   const [jobs, setJobs] = useState([]);
+  const [counts, setCounts] = useState({});
   const [filtered, setFiltered] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const token = localStorage.getItem("token");
+  const apiBase = import.meta.env.VITE_API_BASE_URL;
+
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/jobs/my-jobs`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+        const res = await fetch(`${apiBase}/api/jobs/my-jobs`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
-
         const data = await res.json();
-
-        if (!Array.isArray(data)) {
-          throw new Error("Unexpected server response");
-        }
-
+        if (!Array.isArray(data)) throw new Error("Unexpected server response");
         setJobs(data);
         setFiltered(data);
+
+        const countPromises = data.map((job) =>
+          fetch(`${apiBase}/api/applications/job/${job._id}/count`, {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+            .then((r) => r.json())
+            .then((json) => ({
+              id: job._id,
+              count: json.applicationCount || 0,
+            }))
+            .catch(() => ({ id: job._id, count: 0 }))
+        );
+        const results = await Promise.all(countPromises);
+        const map = {};
+        results.forEach(({ id, count }) => (map[id] = count));
+        setCounts(map);
       } catch (err) {
-        console.error("Error fetching posted jobs:", err.message);
+        console.error("Error fetching posted jobs:", err);
         setError("Failed to fetch jobs");
-        setJobs([]);
-        setFiltered([]);
       } finally {
         setLoading(false);
       }
     };
 
     fetchJobs();
-  }, []);
+  }, [apiBase, token]);
 
   useEffect(() => {
-    if (searchTerm.trim() === "") {
-      setFiltered(jobs);
-    } else {
-      const term = searchTerm.toLowerCase();
-      const filteredJobs = jobs.filter((job) =>
-        job.title.toLowerCase().includes(term)
-      );
-      setFiltered(filteredJobs);
-    }
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) setFiltered(jobs);
+    else
+      setFiltered(jobs.filter((job) => job.title.toLowerCase().includes(term)));
   }, [searchTerm, jobs]);
 
-  if (loading) return <p className="text-center text-gray-200 text-xl font-light">Loading...</p>;
-  if (error) return <p className="text-center text-red-400 text-xl font-light">{error}</p>;
+  const totalApplications = Object.values(counts).reduce((a, b) => a + b, 0);
+
+  const handleDelete = async (jobId) => {
+    const confirmDelete = confirm("Are you sure you want to delete this job?");
+    if (!confirmDelete) return;
+
+    try {
+      const res = await fetch(`${apiBase}/api/jobs/${jobId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!res.ok) throw new Error("Failed to delete job");
+      setJobs((prev) => prev.filter((job) => job._id !== jobId));
+    } catch (err) {
+      console.error("Error deleting job:", err);
+      alert("Something went wrong while deleting.");
+    }
+  };
+
+  if (loading)
+    return <p className="text-center text-gray-400 text-lg">Loading...</p>;
+  if (error) return <p className="text-center text-red-400 text-lg">{error}</p>;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-blue-900 to-gray-900 py-16 px-6 sm:px-12 lg:px-24 relative overflow-hidden">
-      <div className="absolute inset-0 z-0 opacity-20">
-        <img
-          src="/images/luxury-pattern.png"
-          alt="Luxury Background Pattern"
-          className="w-full h-full object-cover"
-        />
-      </div>
-
-      <div className="relative z-10 max-w-5xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-5xl font-extrabold tracking-tight bg-gradient-to-r from-white via-blue-200 to-blue-400 bg-clip-text text-transparent drop-shadow-xl">
-            My Posted Jobs
-          </h2>
-          <p className="mt-5 text-xl text-gray-200 max-w-2xl mx-auto font-light leading-relaxed">
-            Manage your elite job postings and review applicants with KaamKaro's premium dashboard.
+    <div className="min-h-screen px-6 py-10 md:px-20 bg-gradient-to-b from-black via-gray-900 to-blue-950 text-white">
+      <div className="max-w-6xl mx-auto space-y-10">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold tracking-tight">My Dashboard</h1>
+          <p className="text-gray-300 mt-2">
+            Overview and management of your posted jobs.
           </p>
         </div>
 
-        <div className="mb-10 flex justify-center">
-          <input
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+          <Card className="bg-black border border-blue-900">
+            <CardContent className="p-4">
+              <p className="text-gray-400 text-sm">Jobs Posted</p>
+              <h2 className="text-3xl font-bold text-white">{jobs.length}</h2>
+            </CardContent>
+          </Card>
+          <Card className="bg-black border border-blue-900">
+            <CardContent className="p-4">
+              <p className="text-gray-400 text-sm">Active Listings</p>
+              <h2 className="text-3xl font-bold text-white">
+                {jobs.filter((job) => !job.isClosed).length}
+              </h2>
+            </CardContent>
+          </Card>
+          <Card className="bg-black border border-blue-900">
+            <CardContent className="p-4">
+              <p className="text-gray-400 text-sm">Total Applications</p>
+              <h2 className="text-3xl font-bold text-white">
+                {totalApplications}
+              </h2>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="mt-6">
+          <Input
             type="text"
-            placeholder="Search by job title..."
+            placeholder="Search jobs by title..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full md:w-2/3 lg:w-1/2 p-4 bg-gray-800/80 text-white placeholder-gray-400 rounded-xl border border-blue-500/30 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 shadow-md"
+            className="w-full max-w-xl mx-auto bg-black border-gray-700 placeholder-gray-400 text-white"
           />
         </div>
 
+        <Separator className="my-6 bg-black" />
+
         {filtered.length === 0 ? (
-          <p className="text-center text-gray-300 text-xl font-light">No jobs found.</p>
+          <p className="text-center text-gray-400 text-lg">No jobs found.</p>
         ) : (
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((job) => (
-              <div
-                key={job._id}
-                className="bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-md p-6 rounded-3xl shadow-2xl border border-blue-500/30 hover:shadow-blue-600/50 hover:border-blue-600 transition-all duration-500 transform hover:-translate-y-2"
-              >
-                <h3 className="text-xl font-bold text-white mb-4 tracking-tight">{job.title}</h3>
-                <div className="text-sm text-gray-300 space-y-3">
-                  <p className="flex items-center gap-3">
-                    <Briefcase size={18} className="text-blue-400" />
-                    <span className="text-white font-semibold">Company:</span> {job.company}
-                  </p>
-                  <p className="flex items-center gap-3">
-                    <MapPin size={18} className="text-blue-400" />
-                    <span className="text-white font-semibold">Location:</span> {job.location?.city}, {job.location?.state}, {job.location?.country}
-                  </p>
-                  <p className="flex items-center gap-3">
-                    <Calendar size={18} className="text-blue-400" />
-                    <span className="text-white font-semibold">Posted on:</span>{" "}
-                    {new Date(job.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
-                <Link
-                  to={`/employer/job/${job._id}/applications`}
-                  className="mt-4 inline-block px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-xl font-semibold tracking-wide hover:from-blue-700 hover:to-blue-900 transition-all duration-300 shadow-md hover:shadow-blue-500/50"
-                >
-                  <Users size={18} className="inline-block mr-2" />
-                  View Applicants
-                </Link>
-              </div>
-            ))}
+          <div className="overflow-x-auto">
+            <table className="w-full table-auto border-collapse rounded-md text-sm">
+              <thead>
+                <tr className="bg-black text-left text-gray-400">
+                  <th className="p-3">S.No.</th>
+                  <th className="p-3">Title</th>
+                  <th className="p-3">Company</th>
+                  <th className="p-3">Location</th>
+                  <th className="p-3">Applications</th>
+                  <th className="p-3">Posted On</th>
+                  <th className="p-3">View</th>
+                  <th className="p-3">Delete</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((job, index) => (
+                  <tr
+                    key={job._id}
+                    className="border-b border-gray-700 hover:bg-gray-800/50"
+                  >
+                    <td className="p-3 text-gray-300">{index + 1}</td>
+                    <td className="p-3 font-medium text-white">{job.title}</td>
+                    <td className="p-3 text-gray-300">{job.company}</td>
+                    <td className="p-3 text-gray-300">
+                      {job.location?.city}, {job.location?.state}
+                    </td>
+                    <td className="p-3 text-gray-300">
+                      {counts[job._id] || 0}
+                    </td>
+                    <td className="p-3 text-gray-300">
+                      {new Date(job.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="p-3">
+                      <Link
+                        to={`/employer/job/${job._id}/applications`}
+                        className="text-blue-400 hover:underline"
+                      >
+                        View
+                      </Link>
+                    </td>
+                    <td className="p-3">
+                      <button
+                        onClick={() => handleDelete(job._id)}
+                        className="text-red-400 hover:underline"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </div>
