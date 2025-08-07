@@ -48,13 +48,7 @@ const MyApplications = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-blue-900 to-gray-900 py-16 px-6 sm:px-12 lg:px-24 relative overflow-hidden">
-      <div className="absolute inset-0 z-0 opacity-20">
-        <img
-          src="/images/luxury-pattern.png"
-          alt="Luxury Background Pattern"
-          className="w-full h-full object-cover"
-        />
-      </div>
+      
 
       <div className="relative z-10 max-w-6xl mx-auto">
        <div className="mb-12 flex flex-col md:flex-row items-center justify-between gap-8">
