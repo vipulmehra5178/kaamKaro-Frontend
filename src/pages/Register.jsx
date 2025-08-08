@@ -12,12 +12,16 @@ const Register = () => {
     role: "candidate",
   });
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError("");
+
     try {
       await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/api/auth/register`,
@@ -26,13 +30,13 @@ const Register = () => {
       navigate("/login");
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row bg-gradient-to-br from-black via-blue-900 to-gray-900 text-white relative overflow-hidden">
-      
-
       <div className="hidden lg:flex items-center justify-center w-1/2 z-10 p-10">
         <img
           src="/Sign.svg"
@@ -63,6 +67,7 @@ const Register = () => {
               />
               <User size={18} className="absolute top-3 left-3 text-blue-400" />
             </div>
+
             <div className="relative">
               <input
                 name="email"
@@ -74,6 +79,7 @@ const Register = () => {
               />
               <Mail size={18} className="absolute top-3 left-3 text-blue-400" />
             </div>
+
             <div className="relative">
               <input
                 name="password"
@@ -86,6 +92,7 @@ const Register = () => {
               />
               <Lock size={18} className="absolute top-3 left-3 text-blue-400" />
             </div>
+
             <div className="relative">
               <select
                 name="role"
@@ -102,11 +109,39 @@ const Register = () => {
               </select>
               <Briefcase size={18} className="absolute top-3 left-3 text-blue-400" />
             </div>
+
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white py-3 rounded-xl font-semibold tracking-wide shadow-lg transition-all duration-300 transform hover:scale-105"
+              disabled={loading}
+              className="w-full flex justify-center items-center gap-2 bg-gradient-to-r cursor-pointer from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white py-3 rounded-xl font-semibold tracking-wide shadow-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Register
+              {loading ? (
+                <>
+                  <svg
+                    className="animate-spin h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                    />
+                  </svg>
+                  Registering...
+                </>
+              ) : (
+                'Register'
+              )}
             </button>
           </form>
 

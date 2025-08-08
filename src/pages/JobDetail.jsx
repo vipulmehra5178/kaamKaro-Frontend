@@ -51,7 +51,6 @@ const JobDetail = () => {
     <div className="min-h-screen bg-black text-white py-16 px-4 sm:px-8 lg:px-20 relative overflow-hidden">
       <div className="relative z-10 max-w-7xl mx-auto space-y-16">
 
-        {/* Job Info */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="bg-zinc-900 border border-blue-900 shadow-2xl rounded-3xl p-10 space-y-6">
             <h1 className="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-white via-blue-300 to-blue-500 bg-clip-text text-transparent text-center lg:text-left">
@@ -100,7 +99,7 @@ const JobDetail = () => {
             ) : (
               <button
                 onClick={() => setShowForm(!showForm)}
-                className="mt-6 w-full sm:w-fit bg-gradient-to-r from-blue-700 to-blue-900 hover:from-blue-800 hover:to-blue-950 text-white px-6 py-3 rounded-xl font-semibold shadow-lg transition duration-300 hover:scale-105"
+                className="cursor-pointer mt-6 w-full sm:w-fit bg-gradient-to-r from-blue-700 to-blue-900 hover:from-blue-800 hover:to-blue-950 text-white px-6 py-3 rounded-xl font-semibold shadow-lg transition duration-300 hover:scale-105"
               >
                 {showForm ? "Please fill the details below" : 'Apply Now'}
               </button>

@@ -32,13 +32,13 @@ const Welcome = () => {
           {!user && (
             <>
               <Link to="/register">
-                <button className="flex items-center gap-2 px-6 py-3 bg-blue-600 rounded-lg text-white font-semibold hover:bg-blue-700 transition-colors duration-200">
+                <button className="flex items-center cursor-pointer gap-2 px-6 py-3 bg-blue-600 rounded-lg text-white font-semibold hover:bg-blue-700 transition-colors duration-200">
                   <LogIn size={20} />
                   Register
                 </button>
               </Link>
               <Link to="/post-job">
-                <button className="flex items-center gap-2 px-6 py-3 bg-green-600 rounded-lg text-white font-semibold hover:bg-green-700 transition-colors duration-200">
+                <button className="flex items-center cursor-pointer gap-2 px-6 py-3 bg-green-600 rounded-lg text-white font-semibold hover:bg-green-700 transition-colors duration-200">
                   <UserPlus size={20} />
                   Post-Job
                 </button>
@@ -47,7 +47,7 @@ const Welcome = () => {
           )}
 
           <Link to="/jobs">
-            <button className="flex items-center gap-2 px-6 py-3 bg-gray-800 rounded-lg text-white font-semibold hover:bg-gray-900 transition-colors duration-200">
+            <button className="flex items-center cursor-pointer gap-2 px-6 py-3 bg-gray-800 rounded-lg text-white font-semibold hover:bg-gray-900 transition-colors duration-200">
               <Briefcase size={20} />
               Browse Jobs
             </button>

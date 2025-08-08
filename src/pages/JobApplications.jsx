@@ -170,7 +170,7 @@ const JobApplications = () => {
           />
           <Button
             variant="outline"
-            className="bg-blue-950 border border-blue-800 hover:bg-green-500 text-white"
+            className="bg-blue-950 cursor-pointer border border-blue-800 hover:bg-green-500 text-white"
             onClick={downloadCSV}
           >
             Download CSV
@@ -229,7 +229,7 @@ const JobApplications = () => {
                           : "View Resume"}
                       </button>
                       {visibleResumes[app._id] && (
-                        <div className="mt-2">
+                        <div className="mt-2 cursor-pointer">
                           <iframe
                             src={app.resumeUrl}
                             title={`Resume of ${app.candidate?.name}`}

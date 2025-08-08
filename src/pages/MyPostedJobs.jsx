@@ -177,7 +177,7 @@ const MyPostedJobs = () => {
                     <td className="p-3">
                       <button
                         onClick={() => handleDelete(job._id)}
-                        className="text-red-400 hover:underline"
+                        className="text-red-400 cursor-pointer hover:underline"
                       >
                         Delete
                       </button>

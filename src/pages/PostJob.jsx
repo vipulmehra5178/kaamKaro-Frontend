@@ -144,7 +144,7 @@ const PostJob = () => {
 
               <button
                 type="submit"
-                className="w-full py-2.5 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-500 transition-all"
+                className="cursor-pointer w-full py-2.5 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-500 transition-all"
               >
                 Post Job
               </button>
