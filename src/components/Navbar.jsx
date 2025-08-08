@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../context/useAuth";
-import { Briefcase, LogOut, User, Menu, X } from "lucide-react";
+import { Briefcase, LogOut, User, Menu, X, FileSearch } from "lucide-react"; 
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -18,6 +18,7 @@ const Navbar = () => {
 
   const commonLinks = [
     { to: "/jobs", label: "Browse Jobs", icon: <Briefcase size={20} className="text-blue-400" /> },
+    { to: "/resume-evaluator", label: "Check ATS", icon: <FileSearch size={20} className="text-blue-400" /> }, 
   ];
 
   const candidateLinks = [
@@ -39,6 +40,7 @@ const Navbar = () => {
     <nav className="bg-gradient-to-r from-black via-blue-900 to-gray-900 text-white shadow-2xl sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
+          
           <div className="flex items-center">
             <Link to="/" className="text-3xl font-extrabold bg-gradient-to-r from-white via-blue-200 to-blue-400 bg-clip-text text-transparent">
               KaamKaro

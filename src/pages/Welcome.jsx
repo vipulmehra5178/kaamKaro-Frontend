@@ -1,52 +1,62 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { LogIn, UserPlus, Briefcase } from 'lucide-react';
-import useAuth from '../context/useAuth';
+import React from "react";
+import { Link } from "react-router-dom";
+import { LogIn, UserPlus, Briefcase, Sparkles } from "lucide-react";
+import useAuth from "../context/useAuth";
+import ResumeEvaluator from "./ResumeEvaluator";
 
 const Welcome = () => {
-  const { user } = useAuth(); 
-  return (
-    <div className="min-h-screen flex flex-col md:flex-row items-center justify-between bg-gradient-to-br from-black via-blue-900 to-gray-900 text-white p-6 sm:p-10 lg:p-16 font-sans relative overflow-hidden">
-     
+  const { user } = useAuth();
 
-      {/* Left Content */}
+  return (
+    <div className="min-h-screen flex flex-col md:flex-row items-center justify-between bg-gradient-to-br from-black via-blue-950 to-gray-900 text-white px-6 sm:px-12 lg:px-20 py-12 font-sans relative overflow-hidden">
+      
       <div className="max-w-xl text-center md:text-left z-10">
-        <h1 className="text-5xl md:text-6xl font-extrabold mb-6 leading-tight bg-gradient-to-r from-white via-blue-200 to-blue-400 bg-clip-text text-transparent drop-shadow-xl">
+        <h1 className="text-5xl md:text-6xl font-extrabold mb-6 leading-tight">
           {user ? (
-            <>Welcome back, <span className="text-blue-400">{user.name}</span> 👋</>
+            <>Welcome , <span className="text-blue-400">{user.name}</span> 👋</>
           ) : (
             <>Welcome to <span className="text-blue-400">KaamKaro</span></>
           )}
         </h1>
 
-        {!user && (
-          <p className="text-lg md:text-xl mb-8 font-light text-gray-200 drop-shadow-sm">
-            Discover elite career opportunities or hire top talent with KaamKaro's premium platform.
-          </p>
-        )}
+        <p className="text-lg md:text-xl mb-8 font-light text-gray-200 text-justify">
+          Discover career opportunities, hire top talent, and use our special{" "}
+          <span className="text-blue-300 font-semibold"><Link to="/resume-evaluator">{" "}ATS Baba</Link> 
+</span> 
+          {" "} an AI Resume Analyzer to instantly spot strengths and areas for improvement in your CV.
+          Whether you're here to hire or to get hired, KaamKaro makes the process
+          simple, fast, and effective.
+        </p>
 
-        <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
+        <div className="flex flex-wrap gap-4 justify-center md:justify-start">
           {!user && (
             <>
-              <Link to="/login">
-                <button className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 text-base md:text-lg font-semibold">
+              <Link to="/register">
+                <button className="flex items-center gap-2 px-6 py-3 bg-blue-600 rounded-lg text-white font-semibold hover:bg-blue-700 transition-colors duration-200">
                   <LogIn size={20} />
-                  Login
+                  Register
                 </button>
               </Link>
-              <Link to="/register">
-                <button className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 text-base md:text-lg font-semibold">
+              <Link to="/post-job">
+                <button className="flex items-center gap-2 px-6 py-3 bg-green-600 rounded-lg text-white font-semibold hover:bg-green-700 transition-colors duration-200">
                   <UserPlus size={20} />
-                  Register
+                  Post-Job
                 </button>
               </Link>
             </>
           )}
 
           <Link to="/jobs">
-            <button className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-gray-700 to-gray-900 hover:from-gray-800 hover:to-gray-950 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 text-base md:text-lg font-semibold">
+            <button className="flex items-center gap-2 px-6 py-3 bg-gray-800 rounded-lg text-white font-semibold hover:bg-gray-900 transition-colors duration-200">
               <Briefcase size={20} />
               Browse Jobs
+            </button>
+          </Link>
+
+          <Link to="/resume-evaluator">
+            <button className="flex items-center cursor-pointer gap-2 px-6 py-3 bg-purple-600 rounded-lg text-white font-semibold hover:bg-purple-700 transition-colors duration-200">
+              <Sparkles size={20} />
+              Check Your Resume with ATS Baba
             </button>
           </Link>
         </div>
@@ -56,7 +66,7 @@ const Welcome = () => {
         <img
           src="/wel.svg"
           alt="Job search illustration"
-          className="w-full h-auto max-h-[400px] object-contain drop-shadow-xl rounded-xl"
+          className="w-full h-auto max-h-[420px] object-contain"
         />
       </div>
     </div>

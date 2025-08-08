@@ -11,6 +11,16 @@ import MyApplications from "./pages/MyApplications";
 import MyPostedJobs from "./pages/MyPostedJobs";
 import JobApplications from "./pages/JobApplications";
 import Welcome from "./pages/Welcome";
+import ResumeEvaluator from "./pages/ResumeEvaluator";
+import Footer from "./components/Footer";
+import AboutUs from "./pages/AboutUs";
+import ResumeTips from "./pages/ResumeTips";
+import CareerAdvice from "./pages/CareerAdvice";
+import FAQs from "./FAQs";
+import { Contact } from "lucide-react";
+import ContactUs from "./pages/ContactUs";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+
 
 const App = () => {
   return (
@@ -31,7 +41,16 @@ const App = () => {
               path="/employer/job/:jobId/applications"
               element={<JobApplications />}
             />
+            <Route path="/resume-evaluator" element={<ResumeEvaluator />} />
+            <Route path="/about" element={<AboutUs />} />
+            <Route path="/resume-tips" element={<ResumeTips />} />
+            <Route path="/career-advice" element={<CareerAdvice />} />
+            <Route path="/faqs" element={<FAQs />} />
+            <Route path="/contact" element={<ContactUs />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+
           </Routes>
+          <Footer />
         </div>
       </Router>
     </AuthProvider>

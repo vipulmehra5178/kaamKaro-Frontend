@@ -74,7 +74,7 @@ const Login = () => {
             </div>
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white py-3 rounded-xl font-semibold tracking-wide shadow-lg transition-all duration-300 transform hover:scale-105"
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white py-3 rounded-xl cursor-pointer font-semibold tracking-wide shadow-lg transition-all duration-300 transform hover:scale-105"
             >
               Login
             </button>

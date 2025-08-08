@@ -62,7 +62,6 @@ const ApplyJobForm = ({ jobId }) => {
           />
         </div>
 
-        {/* Right form section */}
         <div className="w-full max-w-2xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-5xl font-extrabold tracking-tight bg-gradient-to-r from-white via-blue-400 to-blue-200 bg-clip-text text-transparent drop-shadow-xl">
@@ -146,7 +145,7 @@ const ApplyJobForm = ({ jobId }) => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-800 text-white font-semibold py-3 rounded-xl shadow-lg hover:from-blue-700 hover:to-blue-900 transition-all duration-300 transform hover:scale-105 disabled:opacity-50"
+              className="w-full cursor-pointer bg-gradient-to-r from-blue-600 to-blue-800 text-white font-semibold py-3 rounded-xl shadow-lg hover:from-blue-700 hover:to-blue-900 transition-all duration-300 transform hover:scale-105 disabled:opacity-50"
             >
               {loading ? 'Submitting...' : 'Submit Application'}
             </button>
